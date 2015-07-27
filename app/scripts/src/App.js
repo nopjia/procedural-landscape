@@ -5,8 +5,11 @@ App = function() {
     _updateLoop,
     _renderer, _camera, _scene,
     _mesh, _mat,
-    _controls;
 
+    _SPEED = 10.0,
+    _direction,
+
+    _controls;
 
   // EVENTS
 
@@ -15,8 +18,14 @@ App = function() {
   };
 
   var _onFrameUpdate = function(dt, t) {
-     if (!_controls.enabled)
-      _controls.update();
+    _camera.translateX(_direction.x * _SPEED * dt);
+    _camera.translateY(_direction.y * _SPEED * dt);
+    _camera.translateZ(_direction.z * _SPEED * dt);
+
+    var followPos = _camera.position;
+    _mesh.position.x = Math.round(followPos.x);
+    _mesh.position.z = Math.round(followPos.z);
+
     _renderer.update(dt);
   };
 
@@ -52,13 +61,7 @@ App = function() {
     _scene.add(_mesh);
 
     _camera.position.y = 2;
-    _camera.position.z = 10;
-
-    _controls = new THREE.OrbitControls(_camera, _canvas);
-    _controls.rotateUp(Math.PI/6);
-    _controls.autoRotate = true;
-    _controls.autoRotateSpeed = 1.0;
-    _controls.noPan = true;
+    _direction = new THREE.Vector3(0.447214, 0.0, -0.894427);
   };
 
   _init();

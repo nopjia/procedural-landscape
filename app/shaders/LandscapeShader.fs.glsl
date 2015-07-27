@@ -5,9 +5,9 @@ varying vec2 vUv;
 void main() {
   vec3 color = vec3(vUv.x, vUv.y, 0.0);
 
+  const float LINE_WIDTH = 0.02;
   float line = 0.0;
-  vec2 coords = vUv * vec2(SIZE);
-  if (any( lessThan(mod(coords, vec2(1.0)), vec2(0.02)) ))
+  if (any( lessThan(mod(vUv*vec2(SIZE), vec2(1.0)), vec2(LINE_WIDTH)) ))
     line = 1.0;
 
   color *= line;
