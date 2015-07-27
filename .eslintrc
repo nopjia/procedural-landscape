@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "strict": false,
+    "curly": false,
+    "quotes": [2, "double"]
+  },
+  "globals": {
+    "THREE": true
+  }
+}

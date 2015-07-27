@@ -1,0 +1,54 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>procedural landscape</title>
+
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/reset.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+
+    <!-- build:js scripts/vendor/modernizr.js -->
+    <script src="/bower_components/modernizr/modernizr.js"></script>
+    <!-- endbuild -->
+  </head>
+  <body class="gradient-bg-cyan-black">
+
+    <div id="webgl-container">
+      <canvas id="webgl-canvas"></canvas>
+    </div>
+
+    <!-- build:js scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/three.js/three.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/lib/Stats.js"></script>
+    <script src="scripts/lib/Clock.js"></script>
+    <script src="scripts/lib/OrbitControls.js"></script>
+    <script src="scripts/lib/TrackballControls.js"></script>
+
+    <script src="scripts/src/RenderContext.js"></script>
+    <script src="scripts/src/Utils.js"></script>
+    <script src="scripts/src/UpdateLoop.js"></script>
+    <script src="scripts/src/ShaderPass.js"></script>
+
+    <script src="scripts/src/shaders/LandscapeShader.js"></script>
+
+    <script src="scripts/src/App.js"></script>
+    <script src="scripts/src/main.js"></script>
+    <!-- endbuild -->
+  </body>
+</html>
