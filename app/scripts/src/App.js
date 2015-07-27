@@ -6,7 +6,8 @@ App = function() {
     _renderer, _camera, _scene,
     _mesh, _mat,
 
-    _SPEED = 10.0,
+    _SPEED = 1.0,
+    _FWD_EXTEND = 10.0,
     _direction,
 
     _controls;
@@ -23,8 +24,8 @@ App = function() {
     _camera.translateZ(_direction.z * _SPEED * dt);
 
     var followPos = _camera.position;
-    _mesh.position.x = Math.round(followPos.x);
-    _mesh.position.z = Math.round(followPos.z);
+    _mesh.position.x = Math.round(followPos.x + _direction.x * _FWD_EXTEND);
+    _mesh.position.z = Math.round(followPos.z + _direction.z * _FWD_EXTEND);
 
     _renderer.update(dt);
   };
