@@ -42,7 +42,7 @@ var RenderContext = function(canvas) {
   };
 
   var _cameraParams = {
-    fov: 45,
+    fov: 60,
     near: 1,
     far: 1000
   };

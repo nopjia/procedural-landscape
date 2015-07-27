@@ -3,7 +3,7 @@
 varying vec2 vUv;
 
 void main() {
-  vec3 color = vec3(vUv.x, vUv.y, 0.0);
+  vec3 color = vec3(1.0, 0.0, 0.0);
 
   const float LINE_WIDTH = 0.02;
   float line = 0.0;

@@ -6,9 +6,9 @@ App = function() {
     _renderer, _camera, _scene,
     _mesh, _mat,
 
-    _SPEED = 1.0,
-    _FWD_EXTEND = 10.0,
-    _direction,
+    _SIZE = 100,
+    _SPEED = 5,
+    _fwdExtend = _SIZE/2.0, // center to side
 
     _controls;
 
@@ -19,13 +19,16 @@ App = function() {
   };
 
   var _onFrameUpdate = function(dt, t) {
-    _camera.translateX(_direction.x * _SPEED * dt);
-    _camera.translateY(_direction.y * _SPEED * dt);
-    _camera.translateZ(_direction.z * _SPEED * dt);
+    var dir = _camera.getWorldDirection();
+    _mover.translateX(dir.x * _SPEED * dt);
+    // _mover.translateY(dir.y * _SPEED * dt);
+    _mover.translateZ(dir.z * _SPEED * dt);
 
-    var followPos = _camera.position;
-    _mesh.position.x = Math.round(followPos.x + _direction.x * _FWD_EXTEND);
-    _mesh.position.z = Math.round(followPos.z + _direction.z * _FWD_EXTEND);
+    var followPos = _camera.getWorldPosition();
+    dir.y = 0;
+    dir.normalize();
+    _mesh.position.x = Math.round(followPos.x + dir.x * _fwdExtend);
+    _mesh.position.z = Math.round(followPos.z + dir.z * _fwdExtend);
 
     _renderer.update(dt);
   };
@@ -55,14 +58,22 @@ App = function() {
   };
 
   var _sceneInit = function() {
-    var geo = new THREE.PlaneBufferGeometry(100, 100, 100, 100);
+    var geo = new THREE.PlaneBufferGeometry(_SIZE, _SIZE, _SIZE, _SIZE);
     _mat = createShaderMaterial(LandscapeShader);
     _mesh = new THREE.Mesh(geo, _mat);
     _mesh.rotation.x = -Math.PI/2.0;
     _scene.add(_mesh);
 
-    _camera.position.y = 2;
-    _direction = new THREE.Vector3(0.447214, 0.0, -0.894427);
+    _controls = new THREE.PointerLockControls(_camera);
+    _controls.enabled = true;
+
+    _mover = new THREE.Object3D();
+
+    var ctrlObj = _controls.getObject();
+    ctrlObj.position.y = 0;
+    _mover.position.y = 2;
+    _mover.add(ctrlObj);
+    _scene.add(_mover);
   };
 
   _init();
