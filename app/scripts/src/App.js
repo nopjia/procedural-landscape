@@ -9,6 +9,7 @@ App = function() {
     _SIZE = 100,
     _SPEED = 10,
     _fwdExtend = _SIZE/2.0, // center to side
+    _mover,
 
     _controls;
 

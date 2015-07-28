@@ -12,12 +12,15 @@ var RenderContext = function(canvas) {
   var _camera;
   var _scene;
 
-  var _updateFuncs = [];
-
   var _imgData = {
     pending: false,
     callback: undefined,
     dataUrl: undefined
+  };
+
+  var _postprocess = {
+    enabled: true,
+    resolution: 2,
   };
 
   // HARDCODE PARAMS
@@ -84,6 +87,26 @@ var RenderContext = function(canvas) {
     _stats.domElement.style.left = "0px";
     _stats.domElement.style.top = "0px";
     _canvas.parentElement.appendChild(_stats.domElement);
+
+    if (_postprocess.enabled)
+      this.initPostprocess();
+  };
+
+  this.initPostprocess = function() {
+    _postprocess.target = new THREE.WebGLRenderTarget(
+      _w/_postprocess.resolution,
+      _h/_postprocess.resolution,
+      {
+        format: THREE.RGBFormat,
+        depthBuffer: false,
+        stencilBuffer: false
+      }
+    );
+    _postprocess.target.generateMipmaps = false;
+
+    _postprocess.pass = new ShaderPass(PostShader);
+    _postprocess.pass.material.uniforms.tDiffuse.value = _postprocess.target;
+    _postprocess.pass.material.uniforms.uHV.value.set(1.0/_w, 1.0/_h);
   };
 
   this.setSize = function(w, h) {
@@ -97,16 +120,20 @@ var RenderContext = function(canvas) {
     _camera.updateProjectionMatrix();
   };
 
-  this.update = function(dt) {
+  this.update = function(dt, t) {
     _stats.end();
     _stats.begin();
 
     _renderer.clearTarget(null);
 
-    for (var i=0; i<_updateFuncs.length; i++)
-      _updateFuncs[i](dt);
-
-    _renderer.render(_scene, _camera);
+    if (_postprocess.enabled) {
+      _renderer.render(_scene, _camera, _postprocess.target, true);
+      _postprocess.pass.material.uniforms.uTime.value = t;
+      _postprocess.pass.render(_renderer);
+    }
+    else {
+      _renderer.render(_scene, _camera);
+    }
 
     if (_imgData.pending) {
       _imgData.dataUrl = _renderer.domElement.toDataURL();
