@@ -1,6 +1,7 @@
 #extension GL_OES_standard_derivatives : enable
 
 varying vec2 vUv;
+varying vec3 vPos;
 
 #define GRID_SIZE 100.0
 #define K_LINE 0.5  // line width
@@ -37,7 +38,10 @@ vec3 getFog(vec3 color) {
 }
 
 void main() {
-  vec3 color = vec3(1.0, 0.0, 0.0);
+  vec3 color = vec3(0.8, 0.0, 0.0);
+
+  float heightFactor = smoothstep(0.0, 1.0, vPos.y / 10.0);
+  color += heightFactor;
 
   color = getGrid(color, vUv);
   color = getFog(color);

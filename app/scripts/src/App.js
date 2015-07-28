@@ -7,7 +7,7 @@ App = function() {
     _mesh, _mat,
 
     _SIZE = 100,
-    _SPEED = 5,
+    _SPEED = 10,
     _fwdExtend = _SIZE/2.0, // center to side
 
     _controls;
@@ -21,7 +21,7 @@ App = function() {
   var _onFrameUpdate = function(dt, t) {
     var dir = _camera.getWorldDirection();
     _mover.translateX(dir.x * _SPEED * dt);
-    // _mover.translateY(dir.y * _SPEED * dt);
+    _mover.translateY(dir.y * _SPEED * dt);
     _mover.translateZ(dir.z * _SPEED * dt);
 
     var followPos = _camera.getWorldPosition();
