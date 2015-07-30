@@ -62,9 +62,8 @@ App = function() {
     _mesh.rotation.x = -Math.PI/2.0;
     _scene.add(_mesh);
 
-    _camera.position.y = 2;
-
     _controls = new FlyControls(_camera, _canvas);
+    _controls.getObject().position.y = 2;
     _scene.add(_controls.getObject());
   };
 

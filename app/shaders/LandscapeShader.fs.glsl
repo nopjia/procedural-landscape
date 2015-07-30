@@ -28,7 +28,7 @@ vec3 getGrid(vec3 color, vec2 uv) {
 }
 
 #define K_FOG_COLOR vec3(0.0, 0.0, 0.0)
-#define K_FOG_DENSITY 0.03
+#define K_FOG_DENSITY 0.02
 
 vec3 getFog(vec3 color) {
   float depth = gl_FragCoord.z / gl_FragCoord.w;

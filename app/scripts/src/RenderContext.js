@@ -47,7 +47,7 @@ var RenderContext = function(canvas) {
   var _cameraParams = {
     fov: 60,
     near: 1,
-    far: 1000
+    far: 100
   };
 
   // PRIVATE FUNCTIONS
@@ -62,6 +62,37 @@ var RenderContext = function(canvas) {
     _renderer.shadowMapType = _rendererParams.shadowMapType;
     _renderer.shadowMapCullFace = _rendererParams.shadowMapCullFace;
     _renderer.shadowMapDebug = _rendererParams.shadowMapDebug;
+  };
+
+  _postprocess.init = function() {
+    var copyPass = new THREE.ShaderPass(THREE.CopyShader);
+    var renderPass = new THREE.RenderPass(_scene, _camera);
+    var bokehPass = new THREE.BokehPass(_scene, _camera, {
+      focus:    1.0,
+      aperture: 0.02,
+      maxblur:  1.0,
+      width: _w,
+      height: _h
+    });
+    bokehPass.materialDepth = createShaderMaterial(LandscapeDepthShader);
+    bokehPass.materialDepth.uniforms.mNear.value = _camera.near;
+    bokehPass.materialDepth.uniforms.mFar.value = _camera.far;  // needs update
+
+    var bloomPass = new THREE.BloomPass(2.0);
+
+    var composer = new THREE.EffectComposer(_renderer);
+    composer.addPass(renderPass);
+    // composer.addPass(bokehPass);
+    // bokehPass.renderToScreen = true;
+    composer.addPass(bloomPass);
+    composer.addPass(copyPass);
+    copyPass.renderToScreen = true;
+
+    _postprocess.composer = composer;
+  };
+
+  _postprocess.update = function(dt, t) {
+    _postprocess.composer.render(dt);
   };
 
   // PUBLIC FUNCTIONS
@@ -89,24 +120,7 @@ var RenderContext = function(canvas) {
     _canvas.parentElement.appendChild(_stats.domElement);
 
     if (_postprocess.enabled)
-      this.initPostprocess();
-  };
-
-  this.initPostprocess = function() {
-    _postprocess.target = new THREE.WebGLRenderTarget(
-      _w/_postprocess.resolution,
-      _h/_postprocess.resolution,
-      {
-        format: THREE.RGBFormat,
-        depthBuffer: true,
-        stencilBuffer: false
-      }
-    );
-    _postprocess.target.generateMipmaps = false;
-
-    _postprocess.pass = new ShaderPass(PostShader);
-    _postprocess.pass.material.uniforms.tDiffuse.value = _postprocess.target;
-    _postprocess.pass.material.uniforms.uHV.value.set(1.0/_w, 1.0/_h);
+      _postprocess.init();
   };
 
   this.setSize = function(w, h) {
@@ -127,9 +141,7 @@ var RenderContext = function(canvas) {
     _renderer.clearTarget(null);
 
     if (_postprocess.enabled) {
-      _renderer.render(_scene, _camera, _postprocess.target, true);
-      _postprocess.pass.material.uniforms.uTime.value = t;
-      _postprocess.pass.render(_renderer);
+      _postprocess.update(dt, t);
     }
     else {
       _renderer.render(_scene, _camera);
