@@ -65,28 +65,15 @@ var RenderContext = function(canvas) {
   };
 
   _postprocess.init = function() {
-    var copyPass = new THREE.ShaderPass(THREE.CopyShader);
     var renderPass = new THREE.RenderPass(_scene, _camera);
-    var bokehPass = new THREE.BokehPass(_scene, _camera, {
-      focus:    1.0,
-      aperture: 0.02,
-      maxblur:  1.0,
-      width: _w,
-      height: _h
-    });
-    bokehPass.materialDepth = createShaderMaterial(LandscapeDepthShader);
-    bokehPass.materialDepth.uniforms.mNear.value = _camera.near;
-    bokehPass.materialDepth.uniforms.mFar.value = _camera.far;  // needs update
-
-    var bloomPass = new THREE.BloomPass(1.0);
+    var bloomPass = new THREE.BloomPass(1.5);
+    var filmPass = new THREE.FilmPass(0.5, 0.4, 1024.0, 0);
 
     var composer = new THREE.EffectComposer(_renderer);
     composer.addPass(renderPass);
-    // composer.addPass(bokehPass);
-    // bokehPass.renderToScreen = true;
     composer.addPass(bloomPass);
-    composer.addPass(copyPass);
-    copyPass.renderToScreen = true;
+    composer.addPass(filmPass);
+    filmPass.renderToScreen = true;
 
     _postprocess.composer = composer;
   };
