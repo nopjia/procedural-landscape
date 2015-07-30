@@ -1,6 +1,7 @@
 var FlyControls = function(camera, canvas) {
 
   var _SPEED = 10;
+  var _MIN_Y = 1;
 
   var _camera = camera;
   var _canvas = canvas;
@@ -42,15 +43,16 @@ var FlyControls = function(camera, canvas) {
     _yAmount += _yStrength * dt;
 
     var ROLL_AMOUNT = 0.25;
-
     _rotObj.rotation.y = _xAmount;
     _rotObj.rotation.x = _yAmount;
     _rotObj.rotation.z = Math.max(Math.min(_xStrength * ROLL_AMOUNT, Math.PI/2.0), -Math.PI/2.0);
 
     var dir = _camera.getWorldDirection();
-    _posObj.translateX(dir.x * _SPEED * dt);
-    _posObj.translateY(dir.y * _SPEED * dt);
-    _posObj.translateZ(dir.z * _SPEED * dt);
+    _posObj.position.x += (dir.x * _SPEED * dt);
+    _posObj.position.y += (dir.y * _SPEED * dt);
+    _posObj.position.z += (dir.z * _SPEED * dt);
+
+    _posObj.position.y = Math.max(_posObj.position.y, _MIN_Y);
   };
 
   _init();
