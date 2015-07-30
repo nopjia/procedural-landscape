@@ -7,7 +7,7 @@ varying float vYAdded;
 
 #define THEME_COLOR vec3(1.0, 0.0, 0.0)
 
-#define GRID_SIZE 100.0
+#define GRID_SIZE 128.0
 #define K_LINE 0.5  // line width
 #define K_SM 4.0    // smooth radius in terms of lineWidth
 
@@ -45,8 +45,8 @@ vec3 getShading(vec3 color) {
   vec3 normal = normalize(cross(fdx,fdy));
   float dotFactor = dot(normal, LIGHT_DIR);
 
-  dotFactor *= vYAdded/5.0;
-  dotFactor = smoothstep(0.4, 1.0, dotFactor);
+  dotFactor *= vYAdded/10.0;
+  dotFactor = smoothstep(0.25, 1.0, dotFactor);
 
   color += (THEME_COLOR + vec3(0.5)) * dotFactor;
 

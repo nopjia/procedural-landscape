@@ -6,7 +6,7 @@ App = function() {
     _renderer, _camera, _scene,
     _mesh, _mat,
 
-    _SIZE = 100,
+    _SIZE = 128,
     _SPEED = 10,
     _fwdExtend = _SIZE/2.0, // center to side
 
