@@ -2,6 +2,10 @@
 
 varying vec2 vUv;
 varying vec3 vPos;
+varying float vYGround;
+varying float vYAdded;
+
+#define THEME_COLOR vec3(1.0, 0.0, 0.0)
 
 #define GRID_SIZE 100.0
 #define K_LINE 0.5  // line width
@@ -20,15 +24,37 @@ vec3 getGrid(vec3 color, vec2 uv) {
   vec2 line2 = smoothstep(0.0, 1.0,
     -1.0/((K_SM-1.0)*lineWidth) * coords +
     K_SM/(K_SM-1.0));
-  return color * max(line2.x, line2.y);
+
+  float line = max(line2.x, line2.y);
+
+  float height = vYAdded / 10.0;
+  color += (THEME_COLOR + vec3(height)) * line;
+
+  return color;
 
   // float line = 0.0;
   // if (any(lessThan(coords, vec2(lineWidth))))
   //   line = 1.0;
 }
 
+#define LIGHT_DIR vec3(0.0, 1.0, 0.0)
+
+vec3 getShading(vec3 color) {
+  vec3 fdx = dFdx(vPos);
+  vec3 fdy = dFdy(vPos);
+  vec3 normal = normalize(cross(fdx,fdy));
+  float dotFactor = dot(normal, LIGHT_DIR);
+
+  dotFactor *= vYAdded/5.0;
+  dotFactor = smoothstep(0.4, 1.0, dotFactor);
+
+  color += (THEME_COLOR + vec3(0.5)) * dotFactor;
+
+  return color;
+}
+
 #define K_FOG_COLOR vec3(0.0, 0.0, 0.0)
-#define K_FOG_DENSITY 0.02
+#define K_FOG_DENSITY 0.025
 
 vec3 getFog(vec3 color) {
   float depth = gl_FragCoord.z / gl_FragCoord.w;
@@ -38,12 +64,10 @@ vec3 getFog(vec3 color) {
 }
 
 void main() {
-  vec3 color = vec3(0.8, 0.0, 0.0);
-
-  float heightFactor = smoothstep(0.0, 1.0, vPos.y / 10.0);
-  color += heightFactor;
+  vec3 color = vec3(0.0);
 
   color = getGrid(color, vUv);
+  color = getShading(color);
   color = getFog(color);
 
   gl_FragColor = vec4(color, 1.0);

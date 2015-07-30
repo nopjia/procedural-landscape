@@ -47,7 +47,7 @@ var RenderContext = function(canvas) {
   var _cameraParams = {
     fov: 60,
     near: 1,
-    far: 100
+    far: 1000
   };
 
   // PRIVATE FUNCTIONS
@@ -78,7 +78,7 @@ var RenderContext = function(canvas) {
     bokehPass.materialDepth.uniforms.mNear.value = _camera.near;
     bokehPass.materialDepth.uniforms.mFar.value = _camera.far;  // needs update
 
-    var bloomPass = new THREE.BloomPass(2.0);
+    var bloomPass = new THREE.BloomPass(1.0);
 
     var composer = new THREE.EffectComposer(_renderer);
     composer.addPass(renderPass);
