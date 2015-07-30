@@ -9,7 +9,6 @@ App = function() {
     _SIZE = 100,
     _SPEED = 10,
     _fwdExtend = _SIZE/2.0, // center to side
-    _mover,
 
     _controls;
 
@@ -20,18 +19,16 @@ App = function() {
   };
 
   var _onFrameUpdate = function(dt, t) {
-    var dir = _camera.getWorldDirection();
-    _mover.translateX(dir.x * _SPEED * dt);
-    _mover.translateY(dir.y * _SPEED * dt);
-    _mover.translateZ(dir.z * _SPEED * dt);
+    _controls.update(dt, t);
 
     var followPos = _camera.getWorldPosition();
-    dir.y = 0;
-    dir.normalize();
-    _mesh.position.x = Math.round(followPos.x + dir.x * _fwdExtend);
-    _mesh.position.z = Math.round(followPos.z + dir.z * _fwdExtend);
+    var followDir = _camera.getWorldDirection();
+    followDir.y = 0;
+    followDir.normalize();
+    _mesh.position.x = Math.round(followPos.x + followDir.x * _fwdExtend);
+    _mesh.position.z = Math.round(followPos.z + followDir.z * _fwdExtend);
 
-    _renderer.update(dt);
+    _renderer.update(dt, t);
   };
 
   var _onFixedUpdate = function(dt, t) {
@@ -65,16 +62,10 @@ App = function() {
     _mesh.rotation.x = -Math.PI/2.0;
     _scene.add(_mesh);
 
-    _controls = new THREE.PointerLockControls(_camera);
-    _controls.enabled = true;
+    _camera.position.y = 2;
 
-    _mover = new THREE.Object3D();
-
-    var ctrlObj = _controls.getObject();
-    ctrlObj.position.y = 0;
-    _mover.position.y = 2;
-    _mover.add(ctrlObj);
-    _scene.add(_mover);
+    _controls = new FlyControls(_camera, _canvas);
+    _scene.add(_controls.getObject());
   };
 
   _init();

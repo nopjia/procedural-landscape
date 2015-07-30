@@ -98,7 +98,7 @@ var RenderContext = function(canvas) {
       _h/_postprocess.resolution,
       {
         format: THREE.RGBFormat,
-        depthBuffer: false,
+        depthBuffer: true,
         stencilBuffer: false
       }
     );
