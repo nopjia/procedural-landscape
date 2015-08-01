@@ -1,27 +1,10 @@
-var cloneDefines = function(src) {
-  var dst = {};
-  for (var d in src) {
-    dst[d] = src[d];
-  }
-  return dst;
-};
-
-var createShaderMaterial = function(shader) {
-  return new THREE.ShaderMaterial({
-    defines: cloneDefines(shader.defines),
-    uniforms: THREE.UniformsUtils.clone(shader.uniforms),
-    vertexShader: shader.vertexShader,
-    fragmentShader: shader.fragmentShader
-  });
-};
-
 // can pass in shader or material
 
-var ShaderPass = function(shader) {
+nop.ShaderPass = function(shader) {
   if (shader instanceof THREE.Material)
     this.material = shader;
   else
-    this.material = createShaderMaterial(shader);
+    this.material = nop.ShaderPass.createShaderMaterial(shader);
 
   this.material.blending = THREE.NoBlending;
   this.material.depthWrite = false;
@@ -48,6 +31,23 @@ var ShaderPass = function(shader) {
   this.clear = false;
 };
 
-ShaderPass.prototype.render = function(renderer, writeBuffer) {
+nop.ShaderPass.prototype.render = function(renderer, writeBuffer) {
   renderer.render(this.scene, this.camera, writeBuffer, this.clear);
+};
+
+nop.ShaderPass.cloneDefines = function(src) {
+  var dst = {};
+  for (var d in src) {
+    dst[d] = src[d];
+  }
+  return dst;
+};
+
+nop.ShaderPass.createShaderMaterial = function(shader) {
+  return new THREE.ShaderMaterial({
+    defines: nop.ShaderPass.cloneDefines(shader.defines),
+    uniforms: THREE.UniformsUtils.clone(shader.uniforms),
+    vertexShader: shader.vertexShader,
+    fragmentShader: shader.fragmentShader
+  });
 };

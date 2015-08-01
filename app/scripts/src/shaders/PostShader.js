@@ -1,4 +1,4 @@
-var PostShader = {
+nop.PostShader = {
 
   uniforms: {
     "tDiffuse": { type: "t", value: null },
@@ -6,11 +6,11 @@ var PostShader = {
     "uHV": { type: "v2", value: new THREE.Vector2() },
   },
 
-  vertexShader: Utils.loadTextFile(
+  vertexShader: nop.Utils.loadTextFile(
     "shaders/Basic.vs.glsl"
   ),
 
-  fragmentShader: Utils.loadTextFileInject(
+  fragmentShader: nop.Utils.loadTextFileInject(
     "shaders/PostShader.fs.glsl"
   )
 

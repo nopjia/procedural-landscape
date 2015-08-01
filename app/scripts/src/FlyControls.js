@@ -1,4 +1,4 @@
-var FlyControls = function(camera, canvas) {
+nop.FlyControls = function(camera, canvas) {
 
   var _SPEED = 10;
   var _MIN_Y = 1;
@@ -6,7 +6,7 @@ var FlyControls = function(camera, canvas) {
   var _camera = camera;
   var _canvas = canvas;
 
-  var _posObj, _pitchObj, _yawObj, _rollObj;
+  var _posObj, _rotObj;
 
   var _xStrength = 0,
     _yStrength = 0,

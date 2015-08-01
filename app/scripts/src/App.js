@@ -1,4 +1,4 @@
-App = function() {
+nop.App = function() {
   console.log("hello world!");
 
   var _canvas,
@@ -7,7 +7,6 @@ App = function() {
     _mesh, _mat,
 
     _SIZE = 128,
-    _SPEED = 10,
     _fwdExtend = _SIZE/2.0, // center to side
 
     _controls;
@@ -39,13 +38,13 @@ App = function() {
   // PRIVATE FUNCTIONS
 
   var _init = function() {
-    _updateLoop = new UpdateLoop();
+    _updateLoop = new nop.UpdateLoop();
     _updateLoop.frameCallback = _onFrameUpdate;
     _updateLoop.fixedCallback = _onFixedUpdate;
 
     _canvas = document.querySelector("#webgl-canvas");
 
-    _renderer = new RenderContext(_canvas);
+    _renderer = new nop.RenderContext(_canvas);
     _renderer.init();
     _camera = _renderer.getCamera();
     _scene = _renderer.getScene();
@@ -57,12 +56,12 @@ App = function() {
 
   var _sceneInit = function() {
     var geo = new THREE.PlaneBufferGeometry(_SIZE, _SIZE, _SIZE, _SIZE);
-    _mat = createShaderMaterial(LandscapeShader);
+    _mat = nop.ShaderPass.createShaderMaterial(nop.LandscapeShader);
     _mesh = new THREE.Mesh(geo, _mat);
     _mesh.rotation.x = -Math.PI/2.0;
     _scene.add(_mesh);
 
-    _controls = new FlyControls(_camera, _canvas);
+    _controls = new nop.FlyControls(_camera, _canvas);
     _controls.getObject().position.y = 2;
     _scene.add(_controls.getObject());
   };

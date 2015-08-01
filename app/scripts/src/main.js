@@ -1,4 +1,4 @@
 (function() {
-  var app = new App();
+  var app = new nop.App();
   window.app = app;
 })();

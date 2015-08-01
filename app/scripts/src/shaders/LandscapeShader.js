@@ -1,31 +1,31 @@
-var LandscapeShader = {
+nop.LandscapeShader = {
 
   uniforms: {
 
   },
 
-  vertexShader: Utils.loadTextFileInject(
+  vertexShader: nop.Utils.loadTextFileInject(
     "shaders/LandscapeShader.vs.glsl"
   ),
 
-  fragmentShader: Utils.loadTextFileInject(
+  fragmentShader: nop.Utils.loadTextFileInject(
     "shaders/LandscapeShader.fs.glsl"
   )
 
 };
 
-var LandscapeDepthShader = {
+nop.LandscapeDepthShader = {
 
   uniforms: {
     mNear: { type: "f", value: 1 },
     mFar: { type: "f", value: 100 }
   },
 
-  vertexShader: Utils.loadTextFileInject(
+  vertexShader: nop.Utils.loadTextFileInject(
     "shaders/LandscapeShader.vs.glsl"
   ),
 
-  fragmentShader: Utils.loadTextFileInject(
+  fragmentShader: nop.Utils.loadTextFileInject(
     "shaders/DepthShader.fs.glsl"
   )
 

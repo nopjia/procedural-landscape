@@ -1,6 +1,6 @@
 // TODO: timer sync issue between fixed and frame (?)
 
-var UpdateLoop = function() {
+nop.UpdateLoop = function() {
 
   var _this = this;
 
@@ -78,4 +78,4 @@ var UpdateLoop = function() {
 
 };
 
-UpdateLoop.prototype.constructor = UpdateLoop;
+nop.UpdateLoop.prototype.constructor = nop.UpdateLoop;

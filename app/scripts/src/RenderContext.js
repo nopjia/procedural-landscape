@@ -1,8 +1,6 @@
-var RenderContext = function(canvas) {
+nop.RenderContext = function(canvas) {
 
   // PRIVATE VARS
-
-  var _this = this;
 
   var _canvas = canvas;
   var _stats;
@@ -160,4 +158,4 @@ var RenderContext = function(canvas) {
 
 };
 
-RenderContext.prototype.constructor = RenderContext;
+nop.RenderContext.prototype.constructor = nop.RenderContext;
