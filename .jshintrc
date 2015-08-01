@@ -16,6 +16,7 @@
     "nop": true,
     "THREE": true,
     "Stats": true,
-    "Clock": true
+    "Clock": true,
+    "Leap": true
   }
 }

@@ -30,11 +30,14 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="/bower_components/three.js/three.js"></script>
+    <script src="/bower_components/three.js/three.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
     <!-- build:js scripts/main.js -->
+    <script src="scripts/lib/leap-0.6.4.js"></script>
+    <script src="scripts/lib/leap-plugins-0.1.10.js"></script>
+
     <script src="scripts/lib/Stats.js"></script>
     <script src="scripts/lib/Clock.js"></script>
     <script src="scripts/lib/CopyShader.js"></script>
@@ -58,6 +61,7 @@
     <script src="scripts/src/shaders/PostShader.js"></script>
 
     <script src="scripts/src/FlyControls.js"></script>
+    <script src="scripts/src/LeapManager.js"></script>
     <script src="scripts/src/App.js"></script>
     <script src="scripts/src/main.js"></script>
     <!-- endbuild -->

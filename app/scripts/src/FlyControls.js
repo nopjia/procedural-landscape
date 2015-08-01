@@ -1,6 +1,6 @@
 nop.FlyControls = function(camera, canvas) {
 
-  var _SPEED = 10;
+  var _speed = 10;
   var _MIN_Y = 1;
 
   var _camera = camera;
@@ -38,6 +38,15 @@ nop.FlyControls = function(camera, canvas) {
     return _posObj;
   };
 
+  this.setDirection = function(x, y) {
+    _xStrength = x;
+    _yStrength = y;
+  };
+
+  this.setSpeed = function(speed) {
+    _speed = speed;
+  };
+
   this.update = function(dt, t) {
     _xAmount += _xStrength * dt;
     _yAmount += _yStrength * dt;
@@ -48,9 +57,9 @@ nop.FlyControls = function(camera, canvas) {
     _rotObj.rotation.z = Math.max(Math.min(_xStrength * ROLL_AMOUNT, Math.PI/2.0), -Math.PI/2.0);
 
     var dir = _camera.getWorldDirection();
-    _posObj.position.x += (dir.x * _SPEED * dt);
-    _posObj.position.y += (dir.y * _SPEED * dt);
-    _posObj.position.z += (dir.z * _SPEED * dt);
+    _posObj.position.x += (dir.x * _speed * dt);
+    _posObj.position.y += (dir.y * _speed * dt);
+    _posObj.position.z += (dir.z * _speed * dt);
 
     _posObj.position.y = Math.max(_posObj.position.y, _MIN_Y);
   };

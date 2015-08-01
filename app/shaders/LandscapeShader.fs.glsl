@@ -7,16 +7,15 @@ varying float vYAdded;
 
 #define THEME_COLOR vec3(1.0, 0.0, 0.0)
 
-#define GRID_SIZE 128.0
 #define K_LINE 0.5  // line width
 #define K_SM 4.0    // smooth radius in terms of lineWidth
 
 vec3 getGrid(vec3 color, vec2 uv) {
   vec2 pixSize = abs(dFdx(vUv)) + abs(dFdy(vUv));
 
-  vec2 lineWidth = vec2(K_LINE * GRID_SIZE / 2.0) * pixSize;  // scales with size
+  vec2 lineWidth = vec2(K_LINE * SIZE / 2.0) * pixSize;  // scales with size
 
-  vec2 coords = mod(uv*vec2(GRID_SIZE), vec2(1.0));
+  vec2 coords = mod(uv*vec2(SIZE), vec2(1.0));
   coords.x = coords.x > 0.5 ? 1.0-coords.x : coords.x;
   coords.y = coords.y > 0.5 ? 1.0-coords.y : coords.y;
 

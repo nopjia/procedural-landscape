@@ -3,23 +3,11 @@ nop.RenderContext = function(canvas) {
   // PRIVATE VARS
 
   var _canvas = canvas;
-  var _stats;
   var _renderer;
   var _w, _h, _aspect;
 
   var _camera;
   var _scene;
-
-  var _imgData = {
-    pending: false,
-    callback: undefined,
-    dataUrl: undefined
-  };
-
-  var _postprocess = {
-    enabled: true,
-    resolution: 2,
-  };
 
   // HARDCODE PARAMS
 
@@ -62,24 +50,6 @@ nop.RenderContext = function(canvas) {
     _renderer.shadowMapDebug = _rendererParams.shadowMapDebug;
   };
 
-  _postprocess.init = function() {
-    var renderPass = new THREE.RenderPass(_scene, _camera);
-    var bloomPass = new THREE.BloomPass(1.5);
-    var filmPass = new THREE.FilmPass(0.5, 0.4, 1024.0, 0);
-
-    var composer = new THREE.EffectComposer(_renderer);
-    composer.addPass(renderPass);
-    composer.addPass(bloomPass);
-    composer.addPass(filmPass);
-    filmPass.renderToScreen = true;
-
-    _postprocess.composer = composer;
-  };
-
-  _postprocess.update = function(dt, t) {
-    _postprocess.composer.render(dt);
-  };
-
   // PUBLIC FUNCTIONS
 
   this.init = function() {
@@ -97,15 +67,6 @@ nop.RenderContext = function(canvas) {
     );
 
     _scene = new THREE.Scene();
-
-    _stats = new Stats();
-    _stats.domElement.style.position = "absolute";
-    _stats.domElement.style.left = "0px";
-    _stats.domElement.style.top = "0px";
-    _canvas.parentElement.appendChild(_stats.domElement);
-
-    if (_postprocess.enabled)
-      _postprocess.init();
   };
 
   this.setSize = function(w, h) {
@@ -119,24 +80,9 @@ nop.RenderContext = function(canvas) {
     _camera.updateProjectionMatrix();
   };
 
-  this.update = function(dt, t) {
-    _stats.end();
-    _stats.begin();
-
-    _renderer.clearTarget(null);
-
-    if (_postprocess.enabled) {
-      _postprocess.update(dt, t);
-    }
-    else {
-      _renderer.render(_scene, _camera);
-    }
-
-    if (_imgData.pending) {
-      _imgData.dataUrl = _renderer.domElement.toDataURL();
-      _imgData.pending = false;
-      if(_imgData.callback) _imgData.callback(_imgData.dataUrl);
-    }
+  this.render = function(target) {
+    // _renderer.clearTarget(target);
+    _renderer.render(_scene, _camera, target);
   };
 
   this.getRenderer = function() {
@@ -149,11 +95,6 @@ nop.RenderContext = function(canvas) {
 
   this.getCamera = function() {
     return _camera;
-  };
-
-  this.getImageData = function(cb) {
-    _imgData.pending = true;
-    _imgData.callback = cb;
   };
 
 };
