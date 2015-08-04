@@ -13,6 +13,9 @@ nop.App = function() {
     _postprocess = {
       enabled: true,
     },
+    _channel = {
+      data: new Uint8ClampedArray(3),
+    },
     _leapMan,
     _controls;
 
@@ -136,6 +139,34 @@ nop.App = function() {
 
     _controls.setSpeed(_SPEED);
   };
+
+
+  // PUBLIC
+
+  this.setChannels = function(arr) {
+    _channel.data.set(
+      arr.map(function(value) {
+        return value * 255;
+      })
+      .slice(0, _channel.data.length)
+    );
+
+    // var texture = new THREE.DataTexture(
+    //   _channel.data,
+    //   _channel.data.length, 1,
+    //   THREE.LuminanceFormat
+    // );
+    // texture.minFilter =  THREE.NearestFilter;
+    // texture.magFilter = THREE.NearestFilter;
+    // texture.wrapS = THREE.RepeatWrapping;
+    // texture.wrapT = THREE.ClampToEdgeWrapping;
+
+    // texture.needsUpdate = true;
+    // _channel.texture = texture;
+  };
+
+
+  // INIT
 
   _init();
   _updateLoop.start();
