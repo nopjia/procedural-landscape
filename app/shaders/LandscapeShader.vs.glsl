@@ -1,5 +1,6 @@
 #inject shaders/chunks/NoiseFuncs.glsl
 
+uniform float uTime;
 uniform sampler2D tChannels;
 
 varying vec2 vUv;
@@ -12,11 +13,17 @@ void main() {
 
   vec4 pos = modelMatrix * vec4(position, 1.0);
 
-  vYGround = snoise(pos.xz / 100.0) * 4.0;
+  float floorTime = floor(uTime);
+  float ceilTime = ceil(uTime);
+  float smoothTime = smoothstep(floorTime, ceilTime, uTime);
+  float stepTime = smoothTime + floorTime;
+  float flipflop = mod(uTime, 2.0) > 1.0 ? smoothTime : 1.0-smoothTime;
+
+  vYGround = snoise((pos.xz) / 100.0) * 4.0;
   vYAdded = max(0.0,
-    snoise(pos.xz / 80.0) * 10.0 +
-    snoise(pos.xz / 20.0) * 5.0 +
-    snoise(pos.xz /  5.0) * 2.0
+    snoise((pos.xz) / 80.0) * 10.0 +
+    snoise((pos.xz) / 20.0) * 5.0 +
+    snoise((pos.xz + stepTime) /  5.0) * 2.0
   );
 
   const float SCALE = 32.0;

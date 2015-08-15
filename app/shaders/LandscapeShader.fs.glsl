@@ -2,6 +2,7 @@
 
 #inject shaders/chunks/Rand.glsl
 
+uniform float uTime;
 uniform sampler2D tChannels;
 
 varying vec2 vUv;
@@ -42,16 +43,29 @@ vec3 getGrid(vec3 color) {
 vec3 getFill(vec3 color) {
   vec2 coords = floor(vPos.xz);
 
-  vec2 randVec2 = vec2(rand(coords), rand(vec2(coords.x, 1354.0-coords.y)));
-  coords = floor(coords + randVec2*8.0);
-  coords /= 8.0;
+  float randVal;
+  {
+    randVal = rand(coords + floor(uTime)*16.0);
+    randVal = randVal > 0.98 ? randVal : 0.0;
+  }
 
-  vec2 channels = texture2D(tChannels, coords).rg;
+  float audioVal;
+  {
+    vec2 randVec2 = vec2(
+      rand(coords),
+      rand(vec2(coords.x, 1354.0-coords.y))
+    );
 
-  float value = (channels.x*channels.y)*(channels.x*channels.y);
-  value = value > 0.70 ? value : 0.0;
+    coords = floor(coords + randVec2*8.0);
+    coords /= 8.0;
 
-  return color + (THEME_COLOR + vec3(0.5)) * value;
+    vec2 channels = texture2D(tChannels, coords).rg;
+
+    audioVal = (channels.x*channels.y)*(channels.x*channels.y);
+    audioVal = audioVal > 0.70 ? 1.0 : 0.0;
+  }
+
+  return color + (THEME_COLOR + vec3(0.5)) * (audioVal + randVal);
 }
 
 #define LIGHT_DIR vec3(0.0, 1.0, 0.0)

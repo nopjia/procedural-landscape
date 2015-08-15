@@ -1,7 +1,8 @@
 nop.LandscapeShader = {
 
   uniforms: {
-    "tChannels": { type: "t", value: null }
+    "uTime" : { type: "f", value: 0.0 },
+    "tChannels": { type: "t", value: null },
   },
 
   vertexShader: nop.Utils.loadTextFileInject(

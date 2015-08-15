@@ -44,6 +44,8 @@ nop.App = function() {
 
     // _testPass.render(_renderer.getRenderer()); return;
 
+    _mat.uniforms.uTime.value = t;
+
     if (_postprocess.enabled) {
       _render(_postprocess.composer.writeBuffer);
       _postprocess.composer.render();
