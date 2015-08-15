@@ -1,5 +1,7 @@
 #inject shaders/chunks/NoiseFuncs.glsl
 
+uniform sampler2D tChannels;
+
 varying vec2 vUv;
 varying vec3 vPos;
 varying float vYGround;
@@ -17,7 +19,12 @@ void main() {
     snoise(pos.xz /  5.0) * 2.0
   );
 
+  const float SCALE = 32.0;
+  vec2 channels = texture2D(tChannels, vec2(pos.x/SCALE + 0.5, pos.z/SCALE)).rg;
+  vYAdded *= (1.0 + 0.2 * channels.x * channels.y);
+
   pos.y = vYGround + vYAdded;
+  // pos.y = 0.0;
 
   vPos = pos.xyz;
 

@@ -17,6 +17,7 @@
     "THREE": true,
     "Stats": true,
     "Clock": true,
-    "Leap": true
+    "Leap": true,
+    "osc": true
   }
 }
