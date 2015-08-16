@@ -18,6 +18,7 @@ nop.App = function() {
       dim: _CHANNEL_DIM,
       data: new Uint8Array(_CHANNEL_DIM*_CHANNEL_DIM*3),
     },
+    _particles = {},
     _leapMan,
     _controls;
 
@@ -43,6 +44,8 @@ nop.App = function() {
     _mesh.position.z = Math.round(followPos.z + followDir.z * _fwdExtend);
 
     // _testPass.render(_renderer.getRenderer()); return;
+
+    _particles.update(dt, t);
 
     _mat.uniforms.uTime.value = t;
 
@@ -86,6 +89,7 @@ nop.App = function() {
       _postprocess.init();
 
     _sceneInit();
+    _particles.init();
   };
 
   var _sceneInit = function() {
@@ -146,6 +150,32 @@ nop.App = function() {
     }
 
     _controls.setSpeed(_SPEED);
+  };
+
+  _particles.init = function() {
+    this.DIM = 128;
+    this.count = 4096;
+    this.geo = new THREE.Geometry();
+    for (var i=0; i<this.count; i++) {
+      this.geo.vertices.push(new THREE.Vector3(
+        Math.random() * 2.0*this.DIM - this.DIM,
+        Math.random() * 2.0*this.DIM - this.DIM,
+        Math.random() * 2.0*this.DIM - this.DIM
+      ));
+    }
+    this.mat = nop.ShaderPass.createShaderMaterial(nop.ParticleShader);
+    this.mat.defines.BBOX_DIM = this.DIM.toFixed(1);
+    this.mat.blending = THREE.AdditiveBlending;
+    this.mat.transparent = true;
+    this.mat.depthTest = true;
+    this.mat.depthWrite = false;
+    this.mesh = new THREE.PointCloud(this.geo, this.mat);
+    this.mesh.frustumCulled = false;
+    _scene.add(this.mesh);
+  };
+
+  _particles.update = function(dt, t) {
+    this.mat.uniforms.uTime.value = t;
   };
 
 
