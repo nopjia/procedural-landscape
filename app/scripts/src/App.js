@@ -13,10 +13,12 @@ nop.App = function() {
     _postprocess = {
       enabled: true,
     },
-    _CHANNEL_DIM = 4,
+    _CHANNEL_W = 25,
+    _CHANNEL_H = 1,
     _channel = {
-      dim: _CHANNEL_DIM,
-      data: new Uint8Array(_CHANNEL_DIM*_CHANNEL_DIM*3),
+      w: _CHANNEL_W,
+      h: _CHANNEL_H,
+      data: new Uint8Array(_CHANNEL_W*_CHANNEL_H*3),
     },
     _particles = {},
     _leapMan,
@@ -112,9 +114,9 @@ nop.App = function() {
       new THREE.Quaternion(),
       new THREE.Vector3(0.015, 0.015, 0.015));
     _leapMan = new nop.LeapManager(_renderer.getRenderer(), _camera, tmat);
-  };
 
-  _testPass = new nop.ShaderPass(nop.TestShader);
+    _testPass = new nop.ShaderPass(nop.TestShader);
+  };
 
   _postprocess.init = function() {
     // var renderPass = new THREE.RenderPass(_scene, _camera);
@@ -182,24 +184,29 @@ nop.App = function() {
   // PUBLIC
 
   this.setChannels = function(ch1, ch2) {
-    var TEMPORAL_BLEND = 0.75;
+    var SCALE = 0.2;
+    var TEMPORAL_BLEND = 0.1;
 
-    for (var i=0, n=_channel.dim*_channel.dim; i<n; i++) {
-      _channel.data[i*3 + 0] = (ch1[i] + 0.5) * 255 * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 0];
-      _channel.data[i*3 + 1] = (ch2[i] + 0.5) * 255 * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 1];
+    for (var i=0, n=_channel.w*_channel.h; i<n; i++) {
+      _channel.data[i*3 + 0] = (ch1[i] + 0.5) * 255 * SCALE * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 0];
+      _channel.data[i*3 + 1] = (ch2[i] + 0.5) * 255 * SCALE * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 1];
       // _channel.data[i*3 + 2] = 0;  // dangrous, but not needed here
     }
 
     var texture = new THREE.DataTexture(
       _channel.data,
-      _channel.dim,
-      _channel.dim,
+      _channel.w,
+      _channel.h,
       THREE.RGBFormat // THREE.LuminanceFormat
     );
-    // texture.minFilter =  THREE.NearestFilter;
+    // texture.minFilter = THREE.NearestFilter;
     // texture.magFilter = THREE.NearestFilter;
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    // texture.wrapS = THREE.RepeatWrapping;
+    // texture.wrapT = THREE.RepeatWrapping;
+    texture.wrapS = THREE.ClampToEdgeWrapping;
+    texture.wrapT = THREE.ClampToEdgeWrapping;
 
     texture.needsUpdate = true;
     _channel.texture = texture;

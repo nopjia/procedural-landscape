@@ -19,16 +19,22 @@ void main() {
   float stepTime = smoothTime + floorTime;
   float flipflop = mod(uTime, 2.0) > 1.0 ? smoothTime : 1.0-smoothTime;
 
-  vYGround = snoise((pos.xz) / 100.0) * 4.0;
+  float n0 = snoise(pos.xz / 100.0);
+  float n1 = snoise(pos.xz / 80.0);
+  float n2 = snoise(pos.xz / 20.0);
+  float n3 = snoise((pos.xz + stepTime) /  5.0);
+
+  vYGround = n0 * 4.0;
   vYAdded = max(0.0,
-    snoise((pos.xz) / 80.0) * 10.0 +
-    snoise((pos.xz) / 20.0) * 5.0 +
-    snoise((pos.xz + stepTime) /  5.0) * 2.0
+    n1 * 10.0 +
+    n2 * 5.0 +
+    n3 * 2.0
   );
 
-  const float SCALE = 32.0;
-  vec2 channels = texture2D(tChannels, vec2(pos.x/SCALE + 0.5, pos.z/SCALE)).rg;
-  vYAdded *= (1.0 + 0.2 * channels.x * channels.y);
+  // lookup with n1
+  vec2 channels = texture2D(tChannels, vec2(1.0-n1, 0.5)).rg;
+  channels *= smoothstep(-1.0, 0.0, n1) * 0.8 + 0.2;
+  vYAdded += 10.0 * channels.x * channels.y;
 
   pos.y = vYGround + vYAdded;
   // pos.y = 0.0;

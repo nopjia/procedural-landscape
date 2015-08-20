@@ -43,26 +43,17 @@ vec3 getGrid(vec3 color) {
 vec3 getFill(vec3 color) {
   vec2 coords = floor(vPos.xz);
 
-  float randVal;
+  float randVal = 0.0;
   {
     randVal = rand(coords + floor(uTime)*16.0);
     randVal = randVal > 0.98 ? randVal : 0.0;
   }
 
-  float audioVal;
+  float audioVal = 0.0;
   {
-    vec2 randVec2 = vec2(
-      rand(coords),
-      rand(vec2(coords.x, 1354.0-coords.y))
-    );
-
-    coords = floor(coords + randVec2*8.0);
-    coords /= 8.0;
-
-    vec2 channels = texture2D(tChannels, coords).rg;
-
-    audioVal = (channels.x*channels.y)*(channels.x*channels.y);
-    audioVal = audioVal > 0.70 ? 1.0 : 0.0;
+    vec2 channels = texture2D(tChannels, vec2(rand(coords), 0.5)).rg;
+    audioVal = channels.x * channels.y;
+    audioVal = audioVal > 0.85 ? 1.0 : 0.0;
   }
 
   return color + (THEME_COLOR + vec3(0.5)) * (audioVal + randVal);
