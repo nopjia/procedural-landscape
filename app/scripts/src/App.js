@@ -19,6 +19,7 @@ nop.App = function() {
       w: _CHANNEL_W,
       h: _CHANNEL_H,
       data: new Uint8Array(_CHANNEL_W*_CHANNEL_H*3),
+      sum: 0.0,
     },
     _particles = {},
     _leapMan,
@@ -50,6 +51,15 @@ nop.App = function() {
     _particles.update(dt, t);
 
     _mat.uniforms.uTime.value = t;
+    _bgPass.material.uniforms.uTime.value = t;
+
+    var tmpVec4 = new THREE.Vector4();
+    tmpVec4.set(0, 0, -1, 0);
+    tmpVec4.applyMatrix4(_camera.matrixWorld);
+    _bgPass.material.uniforms.uCamDir.value.set(tmpVec4.x, tmpVec4.y, tmpVec4.z);
+    tmpVec4.set(0, 1, 0, 0);
+    tmpVec4.applyMatrix4(_camera.matrixWorld);
+    _bgPass.material.uniforms.uCamUp.value.set(tmpVec4.x, tmpVec4.y, tmpVec4.z);
 
     if (_postprocess.enabled) {
       _render(_postprocess.composer.writeBuffer);
@@ -198,6 +208,7 @@ nop.App = function() {
       channelSum += ch1[i] + ch2[i];
     }
     channelSum /= _channel.w*_channel.h*2.0;
+    _channel.sum = (1.0-TEMPORAL_BLEND) * channelSum + TEMPORAL_BLEND * _channel.sum;
 
     var texture = new THREE.DataTexture(
       _channel.data,
@@ -217,8 +228,8 @@ nop.App = function() {
     texture.needsUpdate = true;
     _channel.texture = texture;
     _mat.uniforms.tChannels.value = texture;
-    _mat.uniforms.uChannelSum.value = channelSum;
-    _bgPass.material.uniforms.uChannelSum.value = channelSum;
+    _mat.uniforms.uChannelSum.value = _channel.sum;
+    _bgPass.material.uniforms.uChannelSum.value = _channel.sum;
     _testPass.material.uniforms.tDiffuse.value = texture;
   };
 

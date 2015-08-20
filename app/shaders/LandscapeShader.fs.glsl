@@ -54,7 +54,7 @@ vec3 getFill(vec3 color) {
   {
     vec2 channels = texture2D(tChannels, vec2(rand(coords), 0.5)).rg;
     audioVal = channels.x * channels.y;
-    audioVal = audioVal > 0.85 ? 1.0 : 0.0;
+    audioVal = audioVal > 0.5 ? 1.0 : 0.0;
   }
 
   return color + (THEME_COLOR + vec3(0.5)) * (audioVal + randVal);
@@ -76,15 +76,14 @@ vec3 getShading(vec3 color) {
   return color;
 }
 
-#define FOG_COLOR vec3(0.0, 0.0, 0.1)
+#define FOG_COLOR vec3(0.0, 0.0, 0.0)
 #define FOG_DENSITY 0.025
 
 vec3 getFog(vec3 color) {
   float depth = gl_FragCoord.z / gl_FragCoord.w;
   float fogFactor = exp2(-FOG_DENSITY*FOG_DENSITY * depth*depth * 1.442695);
   fogFactor = clamp(1.0 - fogFactor, 0.0, 1.0);
-  vec3 fogColor = FOG_COLOR * smoothstep(1.2, 1.8, uChannelSum);
-  return mix(color, fogColor, fogFactor);
+  return mix(color, FOG_COLOR, fogFactor);
 }
 
 void main() {
