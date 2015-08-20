@@ -4,7 +4,7 @@ nop.App = function() {
   var _canvas,
     _updateLoop, _stats,
     _renderer, _camera, _scene,
-    _mesh, _mat, _testPass,
+    _mesh, _mat, _testPass, _bgPass,
 
     _SPEED = 10.0,
     _SIZE = 128,
@@ -115,6 +115,8 @@ nop.App = function() {
       new THREE.Vector3(0.015, 0.015, 0.015));
     _leapMan = new nop.LeapManager(_renderer.getRenderer(), _camera, tmat);
 
+    _bgPass = new nop.ShaderPass(nop.BackgroundShader);
+
     _testPass = new nop.ShaderPass(nop.TestShader);
   };
 
@@ -134,6 +136,7 @@ nop.App = function() {
 
   var _render = function(target) {
     _renderer.getRenderer().clearTarget(target);
+    _bgPass.render(_renderer.getRenderer(), target);
     _renderer.render(target);
     _leapMan.render(target);
   };
@@ -187,11 +190,14 @@ nop.App = function() {
     var SCALE = 0.2;
     var TEMPORAL_BLEND = 0.1;
 
+    var channelSum = 0.0;
     for (var i=0, n=_channel.w*_channel.h; i<n; i++) {
       _channel.data[i*3 + 0] = (ch1[i] + 0.5) * 255 * SCALE * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 0];
       _channel.data[i*3 + 1] = (ch2[i] + 0.5) * 255 * SCALE * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 1];
       // _channel.data[i*3 + 2] = 0;  // dangrous, but not needed here
+      channelSum += ch1[i] + ch2[i];
     }
+    channelSum /= _channel.w*_channel.h*2.0;
 
     var texture = new THREE.DataTexture(
       _channel.data,
@@ -211,6 +217,8 @@ nop.App = function() {
     texture.needsUpdate = true;
     _channel.texture = texture;
     _mat.uniforms.tChannels.value = texture;
+    _mat.uniforms.uChannelSum.value = channelSum;
+    _bgPass.material.uniforms.uChannelSum.value = channelSum;
     _testPass.material.uniforms.tDiffuse.value = texture;
   };
 

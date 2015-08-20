@@ -4,6 +4,7 @@
 
 uniform float uTime;
 uniform sampler2D tChannels;
+uniform float uChannelSum;
 
 varying vec2 vUv;
 varying vec3 vPos;
@@ -75,14 +76,15 @@ vec3 getShading(vec3 color) {
   return color;
 }
 
-#define K_FOG_COLOR vec3(0.0, 0.0, 0.0)
-#define K_FOG_DENSITY 0.025
+#define FOG_COLOR vec3(0.0, 0.0, 0.1)
+#define FOG_DENSITY 0.025
 
 vec3 getFog(vec3 color) {
   float depth = gl_FragCoord.z / gl_FragCoord.w;
-  float fogFactor = exp2(-K_FOG_DENSITY*K_FOG_DENSITY * depth*depth * 1.442695);
+  float fogFactor = exp2(-FOG_DENSITY*FOG_DENSITY * depth*depth * 1.442695);
   fogFactor = clamp(1.0 - fogFactor, 0.0, 1.0);
-  return mix(color, K_FOG_COLOR, fogFactor);
+  vec3 fogColor = FOG_COLOR * smoothstep(1.2, 1.8, uChannelSum);
+  return mix(color, fogColor, fogFactor);
 }
 
 void main() {
