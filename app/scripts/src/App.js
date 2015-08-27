@@ -9,6 +9,7 @@ nop.App = function() {
     _SPEED = 10.0,
     _SIZE = 128,
     _fwdExtend = _SIZE/2.0, // center to side
+    _MAX_Y = 100.0,
 
     _postprocess = {
       enabled: true,
@@ -21,6 +22,7 @@ nop.App = function() {
       data: new Uint8Array(_CHANNEL_W*_CHANNEL_H*3),
       sum: 0.0,
     },
+
     _particles = {},
     _leapMan,
     _controls;
@@ -59,6 +61,9 @@ nop.App = function() {
     followDir.normalize();
     _mesh.position.x = Math.round(followPos.x + followDir.x * _fwdExtend);
     _mesh.position.z = Math.round(followPos.z + followDir.z * _fwdExtend);
+
+    if (followPos.y > _MAX_Y)
+      _controls.reset();
 
     // _testPass.render(_renderer.getRenderer()); return;
 
