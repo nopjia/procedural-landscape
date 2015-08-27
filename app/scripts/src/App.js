@@ -28,7 +28,20 @@ nop.App = function() {
   // EVENTS
 
   var _onWindowResize = function() {
-    _renderer.setSize(window.innerWidth, window.innerHeight);
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    _renderer.setSize(w, h);
+
+    // reallocate postprocess targets
+    if (_postprocess.enabled) {
+      _postprocess.composer.renderTarget1 = new THREE.WebGLRenderTarget(w, h, {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBFormat,
+        stencilBuffer: false
+      });
+      _postprocess.composer.renderTarget2 = _postprocess.composer.renderTarget1.clone();
+    }
   };
 
   var _onFrameUpdate = function(dt, t) {
