@@ -64,6 +64,13 @@ nop.FlyControls = function(camera, canvas) {
     _posObj.position.y = Math.max(_posObj.position.y, _MIN_Y);
   };
 
+  this.reset = function() {
+    _posObj.position.set(0.0, 0.0, 0.0);
+    _rotObj.rotation.set(0.0, 0.0, 0.0);
+    _xAmount = _xStrength = 0.0;
+    _yAmount = _yStrength = 0.0;
+  };
+
   _init();
 
 };

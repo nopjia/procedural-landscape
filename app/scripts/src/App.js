@@ -116,6 +116,7 @@ nop.App = function() {
 
     _sceneInit();
     _particles.init();
+    _keyboardInit();
   };
 
   var _sceneInit = function() {
@@ -215,6 +216,10 @@ nop.App = function() {
 
   _particles.update = function(dt, t) {
     this.mat.uniforms.uTime.value = t;
+  };
+
+  var _keyboardInit = function() {
+    Mousetrap.bind("shift+r", _controls.reset);
   };
 
 

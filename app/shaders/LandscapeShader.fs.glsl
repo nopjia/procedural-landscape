@@ -10,11 +10,16 @@ varying vec2 vUv;
 varying vec3 vPos;
 varying float vYGround;
 varying float vYAdded;
+varying float vTimeStep;
+varying float vTimeFlipFlop;
 
-#define THEME_COLOR vec3(1.0, 0.0, 0.0)
+#define THEME_COLOR1 vec3(1.0, 0.0, 0.0)
+#define THEME_COLOR2 vec3(0.0, 0.5, 1.0)
 
 #define K_LINE 0.5  // line width
 #define K_SM 4.0    // smooth radius in terms of lineWidth
+
+vec3 themeColor;
 
 vec3 getGrid(vec3 color) {
   vec2 pixSize = abs(dFdx(vUv)) + abs(dFdy(vUv));
@@ -32,7 +37,7 @@ vec3 getGrid(vec3 color) {
   float line = max(line2.x, line2.y);
 
   float height = vYAdded / 10.0;
-  color += (THEME_COLOR + vec3(height)) * line;
+  color += (themeColor + vec3(height)) * line;
 
   return color;
 
@@ -57,7 +62,7 @@ vec3 getFill(vec3 color) {
     audioVal = audioVal > 0.5 ? 1.0 : 0.0;
   }
 
-  return color + (THEME_COLOR + vec3(0.5)) * (audioVal + randVal);
+  return color + (themeColor + vec3(0.5)) * (audioVal + randVal);
 }
 
 #define LIGHT_DIR vec3(0.0, 1.0, 0.0)
@@ -71,7 +76,7 @@ vec3 getShading(vec3 color) {
   dotFactor *= vYAdded/10.0;
   dotFactor = smoothstep(0.25, 1.0, dotFactor);
 
-  color += (THEME_COLOR + vec3(0.5)) * dotFactor;
+  color += (themeColor + vec3(0.5)) * dotFactor;
 
   return color;
 }
@@ -87,6 +92,8 @@ vec3 getFog(vec3 color) {
 }
 
 void main() {
+  themeColor = mix(THEME_COLOR1, THEME_COLOR2, sin(uTime*0.5)/2.0+0.5);
+
   vec3 color = vec3(0.0);
 
   color = getFill(color);
