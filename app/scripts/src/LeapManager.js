@@ -1,5 +1,6 @@
 nop.LeapManager = function(renderer, camera, transform) {
   var _scene, _root, _controller;
+  var _connected = false;
 
   var MAX_HANDS = 4;      // apparently leap can have more than 2 hands
               // more than MAX_HANDS will draw, from plugin
@@ -65,6 +66,10 @@ nop.LeapManager = function(renderer, camera, transform) {
     this.renderer.render(_scene, this.camera, renderTarget, forceClear);
   };
 
+  this.isConnected = function() {
+    return _connected;
+  };
+
 
   // INIT
 
@@ -85,4 +90,25 @@ nop.LeapManager = function(renderer, camera, transform) {
     scene: _root,
     arm: false,
   }).connect();
+
+
+  _controller.on("deviceAttached", function() {
+    console.log("Leap device attached");
+    _connected = true;
+  });
+
+  _controller.on("deviceRemoved", function() {
+    console.log("Leap device removed");
+    _connected = false;
+  });
+
+  _controller.on("deviceConnected", function() {
+    console.log("Leap device connected");
+    _connected = true;
+  });
+
+  _controller.on("deviceDisconnected", function() {
+    console.log("Leap device disconnected");
+    _connected = false;
+  });
 };

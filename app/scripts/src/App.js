@@ -48,7 +48,8 @@ nop.App = function() {
     _stats.end();
     _stats.begin();
 
-    _leapUpdate();
+    if (_leapMan.isConnected())
+      _leapUpdate(dt, t);
 
     _controls.update(dt, t);
 
@@ -164,7 +165,9 @@ nop.App = function() {
     _leapMan.render(target);
   };
 
-  var _leapUpdate = function() {
+  var _currRoll = 0.0;
+
+  var _leapUpdate = function(dt, t) {
     _leapMan.update();
 
     if (_leapMan.frame.hands[0]) {
@@ -175,9 +178,17 @@ nop.App = function() {
 
       _controls.setDirection(roll, pitch);
       _controls.setSpeed(speed);
-    }
 
-    _controls.setSpeed(_SPEED);
+      _currRoll = roll;
+    }
+    else {
+      var dir = _camera.getWorldDirection();
+      var angleY = Math.asin(dir.y) * 180.0 / Math.PI;
+      pitch = (0.0 - angleY) * dt;
+      _currRoll += (0.0 - _currRoll) * dt;
+      _controls.setDirection(_currRoll, pitch);
+      _controls.setSpeed(_SPEED);
+    }
   };
 
   _particles.init = function() {
