@@ -18,6 +18,6 @@
     "Stats": true,
     "Clock": true,
     "Leap": true,
-    "osc": true
+    "Mousetrap": true
   }
 }

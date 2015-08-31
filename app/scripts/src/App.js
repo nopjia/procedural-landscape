@@ -14,12 +14,12 @@ nop.App = function() {
     _postprocess = {
       enabled: true,
     },
-    _CHANNEL_W = 25,
+    _CHANNEL_W = 26,
     _CHANNEL_H = 1,
     _channel = {
       w: _CHANNEL_W,
       h: _CHANNEL_H,
-      data: new Uint8Array(_CHANNEL_W*_CHANNEL_H*3),
+      data: new Uint8Array(_CHANNEL_W*_CHANNEL_H),
       sum: 0.0,
     },
 
@@ -64,8 +64,6 @@ nop.App = function() {
 
     if (followPos.y > _MAX_Y)
       _controls.reset();
-
-    // _testPass.render(_renderer.getRenderer()); return;
 
     _particles.update(dt, t);
 
@@ -147,7 +145,9 @@ nop.App = function() {
 
     _bgPass = new nop.ShaderPass(nop.BackgroundShader);
 
-    _testPass = new nop.ShaderPass(nop.TestShader);
+    _testPass = new nop.ShaderPass(nop.VizShader);
+    _testPass.material.transparent = true;
+    _testPass.material.blending = THREE.NormalBlending;
   };
 
   _postprocess.init = function() {
@@ -169,6 +169,8 @@ nop.App = function() {
     _bgPass.render(_renderer.getRenderer(), target);
     _renderer.render(target);
     _leapMan.render(target);
+
+    _testPass.render(_renderer.getRenderer(), target);
   };
 
   var _currRoll = 0.0;
@@ -190,7 +192,7 @@ nop.App = function() {
     else {
       var dir = _camera.getWorldDirection();
       var angleY = Math.asin(dir.y) * 180.0 / Math.PI;
-      pitch = (0.0 - angleY) * dt;
+      var pitch = (0.0 - angleY) * dt;
       _currRoll += (0.0 - _currRoll) * dt;
       _controls.setDirection(_currRoll, pitch);
       _controls.setSpeed(_SPEED);
@@ -230,25 +232,20 @@ nop.App = function() {
 
   // PUBLIC
 
-  this.setChannels = function(ch1, ch2) {
-    var SCALE = 0.2;
-    var TEMPORAL_BLEND = 0.1;
+  this.setChannels = function(ch) {
+    var TEMPORAL_BLEND = 0.0;
 
-    var channelSum = 0.0;
     for (var i=0, n=_channel.w*_channel.h; i<n; i++) {
-      _channel.data[i*3 + 0] = (ch1[i] + 0.5) * 255 * SCALE * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 0];
-      _channel.data[i*3 + 1] = (ch2[i] + 0.5) * 255 * SCALE * (1.0-TEMPORAL_BLEND) + TEMPORAL_BLEND * _channel.data[i*3 + 1];
-      // _channel.data[i*3 + 2] = 0;  // dangrous, but not needed here
-      channelSum += ch1[i] + ch2[i];
+      _channel.data[i] =
+        (1.0-TEMPORAL_BLEND) * ch[i] +
+        TEMPORAL_BLEND * _channel.data[i];
     }
-    channelSum /= _channel.w*_channel.h*2.0;
-    _channel.sum = (1.0-TEMPORAL_BLEND) * channelSum + TEMPORAL_BLEND * _channel.sum;
 
     var texture = new THREE.DataTexture(
       _channel.data,
       _channel.w,
       _channel.h,
-      THREE.RGBFormat // THREE.LuminanceFormat
+      THREE.LuminanceFormat
     );
     // texture.minFilter = THREE.NearestFilter;
     // texture.magFilter = THREE.NearestFilter;
@@ -262,9 +259,7 @@ nop.App = function() {
     texture.needsUpdate = true;
     _channel.texture = texture;
     _mat.uniforms.tChannels.value = texture;
-    _mat.uniforms.uChannelSum.value = _channel.sum;
-    _bgPass.material.uniforms.uChannelSum.value = _channel.sum;
-    _testPass.material.uniforms.tDiffuse.value = texture;
+    _testPass.material.uniforms.tChannels.value = texture;
   };
 
 

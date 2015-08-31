@@ -4,7 +4,6 @@
 
 uniform float uTime;
 uniform sampler2D tChannels;
-uniform float uChannelSum;
 
 varying vec2 vUv;
 varying vec3 vPos;
@@ -57,9 +56,8 @@ vec3 getFill(vec3 color) {
 
   float audioVal = 0.0;
   {
-    vec2 channels = texture2D(tChannels, vec2(rand(coords), 0.5)).rg;
-    audioVal = channels.x * channels.y;
-    audioVal = audioVal > 0.5 ? 1.0 : 0.0;
+    audioVal = texture2D(tChannels, vec2(rand(coords), 0.5)).r;
+    audioVal = audioVal*audioVal > 0.9 ? 1.0 : 0.0;
   }
 
   return color + (themeColor + vec3(0.5)) * (audioVal + randVal);
@@ -92,7 +90,7 @@ vec3 getFog(vec3 color) {
 }
 
 void main() {
-  themeColor = mix(THEME_COLOR1, THEME_COLOR2, sin(uTime*0.5)/2.0+0.5);
+  themeColor = mix(THEME_COLOR1, THEME_COLOR2, sin(uTime*0.25)/2.0+0.5);
 
   vec3 color = vec3(0.0);
 

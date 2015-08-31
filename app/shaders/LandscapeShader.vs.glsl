@@ -31,10 +31,10 @@ void main() {
     n3 * 2.0
   );
 
-  // lookup with n1
-  vec2 channels = texture2D(tChannels, vec2(1.0-n1, 0.5)).rg;
-  channels *= smoothstep(-1.0, 0.0, n1) * 0.8 + 0.2;
-  vYAdded += 10.0 * channels.x * channels.y;
+  float channel = texture2D(tChannels, vec2(n1, 0.5)).r;  // lookup with n1
+  channel *= channel;
+  channel *= smoothstep(-0.5, 0.5, n1);  // modulate amount affected by noise, so we dont raise flat ground
+  vYAdded += 5.0 * channel;
 
   pos.y = vYGround + vYAdded;
   // pos.y = 0.0;
