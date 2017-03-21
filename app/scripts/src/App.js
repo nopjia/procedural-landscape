@@ -179,10 +179,21 @@ nop.App = function() {
     _leapMan.update();
 
     if (_leapMan.frame.hands[0]) {
-      var hand = _leapMan.frame.hands[0];
-      var pitch = hand.pitch() - 0.05*Math.PI; // adjust tilt
-      var roll = hand.roll();
-      var speed = 0.2*_SPEED + 0.1*hand.sphereRadius;
+
+      var pitch = 0;
+      var roll = 0;
+      var speed = 0;
+
+      for (var i=0; i<_leapMan.frame.hands.length; i++) {
+        var hand = _leapMan.frame.hands[i];
+        pitch += hand.pitch() - 0.05*Math.PI;
+        roll += hand.roll();
+        speed += 0.2*_SPEED + 0.1*hand.sphereRadius;
+      }
+
+      pitch /= _leapMan.frame.hands.length;
+      roll /= _leapMan.frame.hands.length;
+      speed /= _leapMan.frame.hands.length;
 
       _controls.setDirection(roll, pitch);
       _controls.setSpeed(speed);
