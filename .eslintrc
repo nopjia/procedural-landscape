@@ -1,7 +1,7 @@
 {
   "rules": {
-    "strict": false,
-    "curly": false,
+    "strict": 0,
+    "curly": 0,
     "quotes": [2, "double"]
   },
   "globals": {
