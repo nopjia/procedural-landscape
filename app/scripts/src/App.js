@@ -179,7 +179,6 @@ nop.App = function() {
     _leapMan.update();
 
     if (_leapMan.frame.hands[0]) {
-
       var pitch = 0;
       var roll = 0;
       var speed = 0;
@@ -199,14 +198,12 @@ nop.App = function() {
       _controls.setSpeed(speed);
 
       _currRoll = roll;
+
+      _controls.enableAutoLevel = false;
     }
     else {
-      var dir = _camera.getWorldDirection();
-      var angleY = Math.asin(dir.y) * 180.0 / Math.PI;
-      var pitch = (0.0 - angleY) * dt;
-      _currRoll += (0.0 - _currRoll) * dt;
-      _controls.setDirection(_currRoll, pitch);
       _controls.setSpeed(_SPEED);
+      _controls.enableAutoLevel = true;
     }
   };
 

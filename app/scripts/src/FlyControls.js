@@ -13,6 +13,9 @@ nop.FlyControls = function(camera, canvas) {
     _xAmount = 0,
     _yAmount = 0;
 
+  this.enableAutoLevel = true;
+  var _hasUserInput = false;
+
   var _init = function() {
     _posObj = new THREE.Object3D();
     _rotObj = new THREE.Object3D();
@@ -22,8 +25,10 @@ nop.FlyControls = function(camera, canvas) {
 
     _rotObj.rotation.order = "YXZ";
 
-    _canvas.addEventListener("mousemove", _onMouseMove, false);
-    _canvas.addEventListener("touchmove", _onTouchMove, false);
+    _canvas.addEventListener("mousemove", _onMouseMove);
+    _canvas.addEventListener("touchmove", _onTouchMove);
+    _canvas.addEventListener("mouseout", _onMouseEnd);
+    _canvas.addEventListener("touchend", _onMouseEnd);
   };
 
   var _applyInputMove = function(clientX, clientY) {
@@ -33,7 +38,9 @@ nop.FlyControls = function(camera, canvas) {
 
     _xStrength = -x;
     _yStrength = y;
-  }
+
+    _hasUserInput = true;
+  };
 
   var _onMouseMove = function(event) {
     _applyInputMove(event.clientX, event.clientY);
@@ -44,6 +51,10 @@ nop.FlyControls = function(camera, canvas) {
     var touches = event.changedTouches;
     var touch = touches[0];
     _applyInputMove(touch.clientX, touch.clientY);
+  };
+
+  var _onMouseEnd = function(event) {
+    _hasUserInput = false;
   };
 
   this.getObject = function() {
@@ -74,6 +85,16 @@ nop.FlyControls = function(camera, canvas) {
     _posObj.position.z += (dir.z * _speed * dt);
 
     _posObj.position.y = Math.max(_posObj.position.y, _MIN_Y);
+
+    if (this.enableAutoLevel && !_hasUserInput)
+      this.updateAutoLevel(dt, t);
+  };
+
+  this.updateAutoLevel = function(dt, t) {
+    var dir = _camera.getWorldDirection();
+    var angleY = Math.asin(dir.y) * 180.0 / Math.PI;
+    _yStrength = -angleY * dt;
+    _xStrength += -_xStrength * dt;
   };
 
   this.reset = function() {
