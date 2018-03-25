@@ -1,9 +1,0 @@
-{
-  "name": "procedural-landscape",
-  "private": true,
-  "dependencies": {
-    "modernizr": "~2.8.1",
-    "three.js": "~0.71.0",
-    "mousetrap": "~1.5.3"
-  }
-}
