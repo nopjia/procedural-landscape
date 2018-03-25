@@ -23,6 +23,8 @@ nop.App = function() {
       sum: 0.0,
     },
 
+    _enableTestPass = false,
+
     _particles = {},
     _leapMan,
     _controls;
@@ -170,7 +172,8 @@ nop.App = function() {
     _renderer.render(target);
     _leapMan.render(target);
 
-    _testPass.render(_renderer.getRenderer(), target);
+    if (_enableTestPass)
+      _testPass.render(_renderer.getRenderer(), target);
   };
 
   var _currRoll = 0.0;
@@ -234,7 +237,13 @@ nop.App = function() {
   };
 
   var _keyboardInit = function() {
-    Mousetrap.bind("shift+r", _controls.reset);
+    Mousetrap.bind("r", _controls.reset);
+    Mousetrap.bind("d", function() {
+      _enableTestPass = !_enableTestPass;
+    });
+    Mousetrap.bind("s", function() {
+      _postprocess.enabled = !_postprocess.enabled;
+    });
   };
 
 
