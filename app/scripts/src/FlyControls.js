@@ -23,15 +23,27 @@ nop.FlyControls = function(camera, canvas) {
     _rotObj.rotation.order = "YXZ";
 
     _canvas.addEventListener("mousemove", _onMouseMove, false);
+    _canvas.addEventListener("touchmove", _onTouchMove, false);
   };
 
-  var _onMouseMove = function(event) {
+  var _applyInputMove = function(clientX, clientY) {
     // convert to square normalized coords, based on height
-    var y = ((1.0 - event.clientY/_canvas.clientHeight) - 0.5) * 2.0;
-    var x = (event.clientX/_canvas.clientWidth - 0.5) * 2.0 * _canvas.clientWidth/_canvas.clientHeight;
+    var y = ((1.0 - clientY/_canvas.clientHeight) - 0.5) * 2.0;
+    var x = (clientX/_canvas.clientWidth - 0.5) * 2.0 * _canvas.clientWidth/_canvas.clientHeight;
 
     _xStrength = -x;
     _yStrength = y;
+  }
+
+  var _onMouseMove = function(event) {
+    _applyInputMove(event.clientX, event.clientY);
+  };
+
+  var _onTouchMove = function(event) {
+    event.preventDefault();
+    var touches = event.changedTouches;
+    var touch = touches[0];
+    _applyInputMove(touch.clientX, touch.clientY);
   };
 
   this.getObject = function() {
